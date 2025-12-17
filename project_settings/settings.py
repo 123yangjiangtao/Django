@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'accessory',
+    'media',
 ]
 
 MIDDLEWARE = [
@@ -75,16 +77,31 @@ WSGI_APPLICATION = 'project_settings.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+DB_USER = os.getenv("DB_USER", "root")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "123456")
+DB_HOST = os.getenv("DB_HOST", "192.168.198.1")
+DB_PORT = os.getenv("DB_PORT", "3306")
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'scl_healthcare',
-        'USER': 'root',
-        'PASSWORD': '123456',
-        'HOST': '192.168.198.1',
-        'PORT': '3306',
-    }
+        'NAME': os.getenv("DB_NAME", "scl_healthcare"),
+        'USER': DB_USER,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
+    },
+    'medicine': {
+        'ENGINE': os.getenv("MEDICINE_DB_ENGINE", "django.db.backends.mysql"),
+        'NAME': os.getenv("MEDICINE_DB_NAME", "scl_medicine"),
+        'USER': os.getenv("MEDICINE_DB_USER", DB_USER),
+        'PASSWORD': os.getenv("MEDICINE_DB_PASSWORD", DB_PASSWORD),
+        'HOST': os.getenv("MEDICINE_DB_HOST", DB_HOST),
+        'PORT': os.getenv("MEDICINE_DB_PORT", DB_PORT),
+    },
 }
+
+DATABASE_ROUTERS = ['media.db_router.MedicineRouter']
 
 
 # Password validation
@@ -123,7 +140,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media_storage')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
