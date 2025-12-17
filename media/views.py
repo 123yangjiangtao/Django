@@ -627,6 +627,8 @@ def org_tree(request):
     city_id = request.GET.get("cityId")
     county_id = request.GET.get("countyId")
     org_code6 = request.GET.get("orgCode6")
+    if not any([city_id, county_id, org_code6]):
+        return _error("cityId、countyId、orgCode6 至少提供一个以限定范围", status=400)
     if city_id:
         qs = qs.filter(city_id=city_id)
     if county_id:
