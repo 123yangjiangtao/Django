@@ -19,6 +19,8 @@ class SoftDeleteModel(models.Model):
 class MedicOrgAttachType(TimeStampedModel, SoftDeleteModel):
     name = models.CharField(max_length=128, verbose_name="附件类型名称")
     code = models.CharField(max_length=64, unique=True, verbose_name="附件类型编码")
+    category = models.CharField(max_length=64, default="", verbose_name="分类")
+    is_required = models.BooleanField(default=False, verbose_name="是否必填")
     description = models.CharField(max_length=255, blank=True, default="", verbose_name="描述")
     sort_order = models.PositiveIntegerField(default=0, verbose_name="排序")
 
@@ -34,6 +36,8 @@ class MedicOrgAttachType(TimeStampedModel, SoftDeleteModel):
 class MedicEmpAttachType(TimeStampedModel, SoftDeleteModel):
     name = models.CharField(max_length=128, verbose_name="附件类型名称")
     code = models.CharField(max_length=64, unique=True, verbose_name="附件类型编码")
+    category = models.CharField(max_length=64, default="", verbose_name="分类")
+    is_required = models.BooleanField(default=False, verbose_name="是否必填")
     description = models.CharField(max_length=255, blank=True, default="", verbose_name="描述")
     sort_order = models.PositiveIntegerField(default=0, verbose_name="排序")
 
@@ -62,6 +66,10 @@ class MedicOrgInfo(TimeStampedModel, SoftDeleteModel):
     org_code6 = models.CharField(max_length=64, verbose_name="机构代码")
     city_id = models.CharField(max_length=64, blank=True, default="", verbose_name="城市ID")
     county_id = models.CharField(max_length=64, blank=True, default="", verbose_name="区县ID")
+    legal_person_name = models.CharField(max_length=128, blank=True, default="", verbose_name="法定代表人姓名")
+    legal_person_id = models.CharField(max_length=64, blank=True, default="", verbose_name="法定代表人证件号")
+    legal_person_is_blind = models.BooleanField(default=False, verbose_name="法人是否盲人")
+    legal_person_disability_no = models.CharField(max_length=64, blank=True, default="", verbose_name="法人残疾证号")
     parent = models.ForeignKey(
         "self", related_name="children", on_delete=models.SET_NULL, null=True, blank=True, verbose_name="父节点"
     )
@@ -78,11 +86,11 @@ class MedicOrgInfo(TimeStampedModel, SoftDeleteModel):
 
 class MedicEmpInfo(TimeStampedModel, SoftDeleteModel):
     TYPE_BLIND = "BLIND"
-    TYPE_HEALTHY = "HEALTHY"
+    TYPE_ABLE = "ABLE_BODIED"
     TYPE_OTHER = "OTHER"
     EMP_TYPE_CHOICES = (
         (TYPE_BLIND, "盲人"),
-        (TYPE_HEALTHY, "健全"),
+        (TYPE_ABLE, "健全"),
         (TYPE_OTHER, "其他"),
     )
 
@@ -91,6 +99,8 @@ class MedicEmpInfo(TimeStampedModel, SoftDeleteModel):
     emp_type = models.CharField(max_length=32, choices=EMP_TYPE_CHOICES, verbose_name="员工类型")
     id_number = models.CharField(max_length=64, verbose_name="证件号")
     phone = models.CharField(max_length=32, blank=True, default="", verbose_name="联系电话")
+    is_legal_person = models.BooleanField(default=False, verbose_name="是否法人")
+    disability_no = models.CharField(max_length=64, blank=True, default="", verbose_name="残疾证号")
 
     class Meta:
         db_table = "medic_emp_info"
